@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UI 主题样板预览 · 智慧康养健康监测平台</title>
+<style>
+/* ============ 主题变量 ============ */
+:root, body[data-theme="instrument"] {
+  --bg: #f4f6f8;
+  --bg-grad: #f4f6f8;
+  --panel: #ffffff;
+  --panel-2: #f9fafc;
+  --line: #e2e8ee;
+  --line-strong: #c4cdd8;
+  --text: #16212e;
+  --sub: #4c5e70;
+  --muted: #8595a7;
+  --brand: #0e7490;
+  --brand-2: #0891b2;
+  --brand-soft: rgba(14,116,144,.08);
+  --ok: #0d9463;
+  --ok-soft: rgba(13,148,99,.09);
+  --warn: #c2620a;
+  --warn-soft: rgba(194,98,10,.10);
+  --danger: #c53030;
+  --danger-soft: rgba(197,48,48,.09);
+  --offline: #64748b;
+  --offline-soft: rgba(100,116,139,.10);
+  --radius: 12px;
+  --radius-sm: 8px;
+  --shadow: 0 1px 3px rgba(22,33,46,.07);
+  --shadow-hover: 0 8px 24px rgba(22,33,46,.12);
+  --num-font: 'Consolas','JetBrains Mono',monospace;
+  --avatar-bg: linear-gradient(135deg,#0e7490,#0891b2);
+  --ring-track: #eef2f6;
+  --ai-grad: linear-gradient(135deg,#0e7490,#6366f1);
+}
+body[data-theme="warm"] {
+  --bg: #faf6ef;
+  --bg-grad: linear-gradient(180deg, #fbf8f2 0%, #f6efe2 100%);
+  --panel: #fffdf8;
+  --panel-2: #faf6ee;
+  --line: #eadfcd;
+  --line-strong: #d9c9ae;
+  --text: #3d3427;
+  --sub: #6f6350;
+  --muted: #a3947c;
+  --brand: #4d7c5f;
+  --brand-2: #6a9c78;
+  --brand-soft: rgba(77,124,95,.12);
+  --ok: #4d7c5f;
+  --ok-soft: rgba(77,124,95,.11);
+  --warn: #c07b32;
+  --warn-soft: rgba(192,123,50,.13);
+  --danger: #bb4a3c;
+  --danger-soft: rgba(187,74,60,.11);
+  --offline: #8d8272;
+  --offline-soft: rgba(141,130,114,.13);
+  --radius: 20px;
+  --radius-sm: 14px;
+  --shadow: 0 6px 22px rgba(120,100,70,.10);
+  --shadow-hover: 0 14px 34px rgba(120,100,70,.18);
+  --num-font: 'Segoe UI','Microsoft YaHei UI',sans-serif;
+  --avatar-bg: linear-gradient(135deg,#6a9c78,#4d7c5f);
+  --ring-track: #efe7d8;
+  --ai-grad: linear-gradient(135deg,#4d7c5f,#c07b32);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Segoe UI','Microsoft YaHei UI','PingFang SC',sans-serif;
+  background: var(--bg-grad); background-attachment: fixed;
+  color: var(--text); min-height: 100vh;
+}
+body[data-theme="warm"] { font-size: 17px; }
+
+/* ============ 切换条 ============ */
+.switcher {
+  position: sticky; top: 0; z-index: 50;
+  display: flex; align-items: center; gap: 10px; padding: 12px 22px;
+  background: rgba(10,12,24,.88); backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(255,255,255,.12); color: #e8edfa;
+}
+.switcher b { font-size: 14px; margin-right: 8px; }
+.switcher button {
+  padding: 7px 16px; border-radius: 999px; cursor: pointer;
+  border: 1px solid rgba(255,255,255,.22); background: transparent; color: #cdd7ef; font-size: 13px;
+}
+.switcher button.active { background: #e8edfa; color: #101828; font-weight: 600; }
+.switcher a { margin-left: auto; color: #9fb2d8; font-size: 12.5px; text-decoration: none; }
+.switcher a:hover { color: #e8edfa; }
+
+/* ============ 布局 ============ */
+.frame { display: flex; align-items: stretch; }
+.sidebar { width: 268px; flex-shrink: 0; }
+.sidebar .panel {
+  position: sticky; top: 51px; height: calc(100vh - 51px); overflow-y: auto;
+  display: flex; flex-direction: column; padding: 20px 16px;
+  border: none; border-right: 1px solid var(--line); border-radius: 0; box-shadow: none;
+}
+.main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 16px; padding: 20px 22px 48px; }
+.panel {
+  background: var(--panel); border: 1px solid var(--line);
+  border-radius: var(--radius); box-shadow: var(--shadow); padding: 18px 20px;
+}
+
+/* ============ 侧栏（原 4 模块 · 拼贴瓦片排版）============ */
+.side-head { padding: 8px 8px 16px; border-bottom: 1px solid var(--line); margin-bottom: 16px; }
+.sh-label { font-size: 10px; letter-spacing: .18em; color: var(--brand); font-weight: 700; }
+.sh-title { font-size: 20px; font-weight: 800; margin-top: 6px; }
+.sh-sub { font-size: 11.5px; color: var(--muted); margin-top: 5px; }
+
+.profile {
+  display: flex; align-items: center; gap: 11px;
+  padding: 12px 12px; border-radius: var(--radius-sm);
+  background: var(--panel-2); border: 1px solid var(--line); margin-bottom: 14px;
+}
+.profile .avatar { width: 40px; height: 40px; font-size: 15px; }
+.profile .p-name { font-size: 14px; font-weight: 700; }
+.profile .p-role { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.profile .onduty { margin-left: auto; font-size: 10.5px; font-weight: 700; color: var(--ok);
+  background: var(--ok-soft); padding: 3px 8px; border-radius: 999px; white-space: nowrap; }
+
+.shift-card {
+  margin-top: 14px; padding: 12px 13px; border-radius: var(--radius-sm);
+  border: 1px solid var(--line); background: var(--panel-2);
+}
+.shift-card .sc-head { display: flex; justify-content: space-between; align-items: center; }
+.shift-card .sc-head b { font-size: 12.5px; }
+.shift-card .sc-head span { font-family: var(--num-font); color: var(--muted); font-size: 11px; }
+.shift-card .pbar { margin-top: 9px; }
+.shift-card .sc-foot { display: flex; justify-content: space-between; font-size: 10.5px; color: var(--muted); margin-top: 6px; }
+
+.todo-mini { margin-top: 12px; padding: 12px 13px; border-radius: var(--radius-sm);
+  border: 1px solid var(--line); background: var(--panel-2); }
+.todo-mini .tm-head { display: flex; justify-content: space-between; font-size: 12.5px; font-weight: 700; margin-bottom: 8px; }
+.todo-mini .tm-head span { font-family: var(--num-font); color: var(--brand); }
+.todo { display: flex; align-items: center; gap: 8px; padding: 4px 0; font-size: 12px; color: var(--sub); }
+.todo .box { width: 15px; height: 15px; flex-shrink: 0; border-radius: 4px; border: 1.5px solid var(--line-strong);
+  display: grid; place-items: center; font-size: 10px; color: #fff; }
+.todo.done .box { background: var(--ok); border-color: var(--ok); }
+.todo.done label { text-decoration: line-through; color: var(--muted); }
+
+.side-nav { display: flex; flex-direction: column; gap: 12px; }
+.nav-item {
+  display: flex; align-items: center; gap: 13px; padding: 15px 14px;
+  border-radius: var(--radius-sm); border: 1px solid var(--line); background: var(--panel-2);
+  cursor: pointer; transition: transform .16s ease, box-shadow .16s ease;
+}
+.nav-item:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+.nav-item .ic { width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px;
+  display: grid; place-items: center; font-size: 18px;
+  background: var(--panel); border: 1px solid var(--line); color: var(--sub); }
+.nav-item .nv { flex: 1; min-width: 0; }
+.nav-item .nv b { display: block; font-size: 15px; font-weight: 700; color: var(--sub); }
+.nav-item .nv span { display: block; font-size: 11.5px; color: var(--muted); margin-top: 3px; line-height: 1.4; }
+.nav-item.active { background: var(--brand-soft); border-color: color-mix(in srgb, var(--brand) 45%, transparent); }
+.nav-item.active .nv b { color: var(--text); font-weight: 800; }
+.nav-item.active .nv span { color: var(--sub); }
+.nav-item.active .ic { background: var(--brand); color: #fff; border-color: transparent;
+  box-shadow: 0 4px 12px color-mix(in srgb, var(--brand) 35%, transparent); }
+body[data-theme="instrument"] .nav-item.active { box-shadow: inset 3px 0 0 var(--brand); }
+body[data-theme="warm"] .nav-item { border-width: 1.5px; }
+.side-spacer { flex: 1; min-height: 12px; }
+
+.side-foot {
+  margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line);
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 12.5px; color: var(--sub); cursor: pointer;
+}
+.side-foot .ver { font-family: var(--num-font); font-size: 10.5px; color: var(--muted); }
+
+/* ============ 顶栏 ============ */
+.topbar { display: flex; align-items: center; justify-content: space-between; padding: 13px 20px; }
+.brand-line { display: flex; align-items: center; gap: 12px; }
+.logo { width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center;
+  background: var(--avatar-bg); color: #fff; font-weight: 800; font-size: 16px; }
+.brand-eyebrow { font-size: 10.5px; letter-spacing: .14em; color: var(--brand); font-weight: 700; }
+.brand-name { font-size: 16.5px; font-weight: 700; }
+.top-utils { display: flex; align-items: center; gap: 9px; }
+.util-btn { position: relative; width: 34px; height: 34px; border-radius: 9px; display: grid; place-items: center;
+  border: 1px solid var(--line); background: var(--panel-2); cursor: pointer; font-size: 14px; color: var(--sub); }
+.util-btn .u-dot { position: absolute; top: -3px; right: -3px; min-width: 15px; height: 15px; border-radius: 999px;
+  background: var(--danger); color: #fff; font-size: 9.5px; font-weight: 700;
+  display: grid; place-items: center; padding: 0 3px; border: 2px solid var(--panel); }
+.search-box { display: flex; align-items: center; gap: 7px; width: 210px;
+  border: 1px solid var(--line); background: var(--panel-2); border-radius: 999px;
+  padding: 7px 13px; font-size: 12px; color: var(--muted); }
+
+/* ============ 通用小件 ============ */
+.avatar {
+  position: relative; width: 42px; height: 42px; border-radius: 50%; flex-shrink: 0;
+  background: var(--avatar-bg); color: #fff; font-weight: 700; font-size: 16px;
+  display: grid; place-items: center;
+}
+.section-label { font-size: 11px; letter-spacing: .12em; color: var(--brand); font-weight: 700; margin-bottom: 4px; }
+.section-title { font-size: 16.5px; font-weight: 700; margin-bottom: 13px; }
+.section-head { display: flex; justify-content: space-between; align-items: baseline; }
+.section-head .more { font-size: 12px; color: var(--brand); cursor: pointer; white-space: nowrap; }
+.delta { font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 999px; white-space: nowrap; }
+.delta.up   { color: var(--ok); background: var(--ok-soft); }
+.delta.down { color: var(--danger); background: var(--danger-soft); }
+.delta.flat { color: var(--muted); background: var(--offline-soft); }
+.pbar { height: 7px; border-radius: 99px; background: var(--ring-track); overflow: hidden; flex: 1; }
+.pbar i { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg,var(--brand-2),var(--brand)); }
+.lv { font-size: 10.5px; font-weight: 700; border-radius: 5px; padding: 2px 7px; white-space: nowrap; }
+.lv.p0 { color: var(--danger); background: var(--danger-soft); }
+.lv.p1 { color: var(--warn); background: var(--warn-soft); }
+.lv.p2 { color: var(--ok); background: var(--ok-soft); }
+@keyframes pulse {
+  0%   { box-shadow: 0 0 0 0 color-mix(in srgb, var(--status, var(--ok)) 55%, transparent); }
+  70%  { box-shadow: 0 0 0 7px transparent; }
+  100% { box-shadow: 0 0 0 0 transparent; }
+}
+
+/* ============ Hero ============ */
+.hero { display: flex; align-items: center; gap: 26px; flex-wrap: wrap; }
+.score-wrap { display: flex; align-items: center; gap: 16px; flex-shrink: 0; }
+.ring { position: relative; width: 108px; height: 108px; }
+.ring svg { transform: rotate(-90deg); }
+.ring .track { fill: none; stroke: var(--ring-track); stroke-width: 9; }
+.ring .bar { fill: none; stroke: var(--brand); stroke-width: 9; stroke-linecap: round;
+  stroke-dasharray: 289; stroke-dashoffset: 289; animation: ringIn 1.1s cubic-bezier(.4,0,.2,1) forwards; }
+@keyframes ringIn { to { stroke-dashoffset: var(--target, 60); } }
+.ring .val { position: absolute; inset: 0; display: grid; place-items: center; text-align: center; }
+.ring .val b { font-family: var(--num-font); font-size: 27px; display: block; line-height: 1; }
+.ring .val span { font-size: 10.5px; color: var(--muted); }
+.score-meta h2 { font-size: 17px; margin-bottom: 4px; }
+.score-meta p { font-size: 12.5px; color: var(--sub); max-width: 200px; }
+.score-meta .tag { display: inline-flex; margin-top: 8px; font-size: 11.5px; color: var(--ok);
+  background: var(--ok-soft); padding: 3px 10px; border-radius: 999px; font-weight: 600; }
+.kpis { flex: 1; min-width: 420px; display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+.kpi { border: 1px solid var(--line); background: var(--panel-2); border-radius: var(--radius-sm);
+  padding: 12px 14px; transition: transform .15s ease, box-shadow .15s ease; }
+.kpi:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+.kpi .k { font-size: 11.5px; color: var(--muted); }
+.kpi .v { font-family: var(--num-font); font-size: 23px; font-weight: 700; margin-top: 4px; }
+.kpi .v small { font-size: 12px; color: var(--muted); font-weight: 400; }
+.kpi .foot { margin-top: 6px; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.kpi .spark { width: 74px; height: 26px; }
+.kpi .spark polyline { fill: none; stroke: var(--brand-2); stroke-width: 2; stroke-linecap: round; }
+.kpi.alert .v { color: var(--danger); }
+
+/* ============ 快捷操作 ============ */
+.qa-row { display: flex; gap: 12px; }
+.qa { flex: 1; display: flex; align-items: center; gap: 11px;
+  border: 1px solid var(--line); background: var(--panel); border-radius: var(--radius);
+  box-shadow: var(--shadow); padding: 13px 16px; cursor: pointer;
+  transition: transform .15s ease, box-shadow .15s ease; }
+.qa:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+.qa .qa-ic { width: 38px; height: 38px; border-radius: 10px; display: grid; place-items: center;
+  font-size: 17px; color: #fff; background: var(--avatar-bg); flex-shrink: 0; }
+.qa:nth-child(2) .qa-ic { background: linear-gradient(135deg,var(--ok),var(--brand-2)); }
+.qa:nth-child(3) .qa-ic { background: linear-gradient(135deg,var(--warn),var(--danger)); }
+.qa:nth-child(4) .qa-ic { background: linear-gradient(135deg,var(--offline),var(--sub)); }
+.qa b { display: block; font-size: 13px; }
+.qa span { display: block; font-size: 10.5px; color: var(--muted); margin-top: 2px; }
+
+/* ============ 老人卡片 ============ */
+.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 13px; }
+.elder-card {
+  position: relative; border-radius: var(--radius-sm); padding: 14px 15px 12px;
+  border: 1px solid var(--line); background: var(--panel);
+  cursor: pointer; transition: transform .16s ease, box-shadow .16s ease;
+}
+.elder-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-hover); }
+body[data-theme="instrument"] .elder-card::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+  border-radius: 8px 0 0 8px; background: var(--card-accent, var(--offline));
+}
+body[data-theme="warm"] .elder-card { border-width: 1.5px; }
+body[data-theme="warm"] .elder-card.s-ok   { border-color: color-mix(in srgb, var(--ok) 40%, transparent); }
+body[data-theme="warm"] .elder-card.s-warn { border-color: color-mix(in srgb, var(--warn) 55%, transparent); background: color-mix(in srgb, var(--warn) 5%, var(--panel)); }
+body[data-theme="warm"] .elder-card.s-off  { border-style: dashed; }
+.elder-card.s-ok   { --card-accent: var(--ok);   --status: var(--ok);   --status-soft: var(--ok-soft); }
+.elder-card.s-warn { --card-accent: var(--warn); --status: var(--warn); --status-soft: var(--warn-soft); }
+.elder-card.s-off  { --card-accent: var(--offline); --status: var(--offline); --status-soft: var(--offline-soft); }
+.elder-card.s-off .avatar { filter: grayscale(.7); opacity: .75; }
+.elder-card .avatar { box-shadow: 0 0 0 2px var(--panel), 0 0 0 4px var(--status); }
+.ec-top { display: flex; align-items: center; gap: 11px; }
+.st-dot { position: absolute; right: -1px; bottom: -1px; width: 12px; height: 12px;
+  border-radius: 50%; background: var(--status); border: 2px solid var(--panel); }
+.st-dot.live { animation: pulse 2.2s infinite; }
+.ec-id { flex: 1; min-width: 0; }
+.ec-id .name { font-weight: 700; font-size: 15px; }
+.ec-id .room { font-size: 11.5px; color: var(--muted); margin-top: 2px; }
+.badge { font-size: 11px; padding: 3px 10px; border-radius: 999px; font-weight: 600;
+  color: var(--status); background: var(--status-soft); white-space: nowrap; }
+.ec-vitals { display: flex; gap: 7px; margin-top: 12px; }
+.vt { flex: 1; text-align: center; border: 1px solid var(--line); background: var(--panel-2);
+  border-radius: 8px; padding: 6px 2px 5px; }
+.vt i { font-style: normal; display: block; font-size: 10px; color: var(--muted); }
+.vt b { font-family: var(--num-font); font-size: 14.5px; }
+.vt.hi b { color: var(--warn); }
+.vt.na b { color: var(--muted); font-weight: 400; }
+.ec-foot { display: flex; align-items: center; gap: 8px; margin-top: 11px; }
+.ec-foot .label { font-size: 10.5px; color: var(--muted); white-space: nowrap; }
+.ec-foot .pbar i { background: linear-gradient(90deg, color-mix(in srgb, var(--status) 65%, #fff), var(--status)); }
+.ec-foot .score { font-family: var(--num-font); font-size: 13px; font-weight: 700; color: var(--status); }
+
+/* ============ 实时监护 ============ */
+.duo { display: grid; grid-template-columns: 1.5fr 1fr; gap: 16px; }
+.live-head { display: flex; align-items: center; gap: 10px; }
+.live-head .avatar { width: 38px; height: 38px; font-size: 14px; --status: var(--ok); box-shadow: 0 0 0 2px var(--panel), 0 0 0 4px var(--ok); }
+.live-chip { margin-left: auto; display: flex; align-items: center; gap: 6px;
+  font-size: 11.5px; color: var(--ok); background: var(--ok-soft);
+  padding: 4px 11px; border-radius: 999px; font-weight: 600; }
+.live-chip .d { width: 7px; height: 7px; border-radius: 50%; background: var(--ok); animation: pulse 1.8s infinite; }
+.ecg-box { margin-top: 13px; border: 1px solid var(--line); border-radius: var(--radius-sm);
+  background: var(--panel-2); padding: 10px 12px 6px; overflow: hidden; }
+.ecg-box svg { width: 100%; height: 92px; display: block; }
+.spark-grid line { stroke: var(--line); stroke-width: 1; }
+.ecg-line { fill: none; stroke: var(--ok); stroke-width: 2; stroke-linecap: round;
+  stroke-dasharray: 1400; stroke-dashoffset: 1400; animation: draw 7s linear infinite; }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+.ecg-cap { font-size: 11px; color: var(--muted); display: flex; justify-content: space-between; padding: 6px 2px 4px; }
+.vitals { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 13px; }
+.vital { border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 11px 12px 9px;
+  background: var(--panel-2); transition: transform .15s ease, box-shadow .15s ease; }
+.vital:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+.vital .k { font-size: 11px; color: var(--muted); display: flex; justify-content: space-between; align-items: center; gap: 4px; }
+.vital .v { font-family: var(--num-font); font-size: 23px; font-weight: 700; margin: 3px 0 1px; }
+.vital .v .u { font-size: 11px; color: var(--muted); font-weight: 400; margin-left: 2px; }
+.vital .range { font-size: 10px; color: var(--muted); }
+.vital .spark { width: 100%; height: 22px; margin-top: 5px; }
+.vital .spark polyline { fill: none; stroke: var(--brand-2); stroke-width: 1.6; }
+.vital .spark line.band { stroke: var(--ok); stroke-width: 5; opacity: .14; }
+body[data-theme="warm"] .vital .v { font-size: 26px; }
+
+/* ============ 告警时间线 ============ */
+.tl-item { position: relative; display: flex; gap: 12px; padding: 0 0 16px 2px; }
+.tl-item:last-child { padding-bottom: 2px; }
+.tl-item::before { content: ''; position: absolute; left: 8px; top: 16px; bottom: -2px; width: 2px; background: var(--line); }
+.tl-item:last-child::before { display: none; }
+.tl-dot { position: relative; z-index: 1; width: 14px; height: 14px; border-radius: 50%;
+  flex-shrink: 0; margin-top: 3px; border: 3px solid var(--panel); }
+.tl-dot.p0 { background: var(--danger); --status: var(--danger); animation: pulse 1.8s infinite; }
+.tl-dot.p1 { background: var(--warn); }
+.tl-dot.ok { background: var(--ok); }
+.tl-body { flex: 1; }
+.tl-head { display: flex; align-items: center; gap: 8px; }
+.tl-head b { font-size: 13.5px; }
+.tl-head .t { margin-left: auto; font-family: var(--num-font); font-size: 11.5px; color: var(--muted); }
+.tl-body p { font-size: 12px; color: var(--sub); margin-top: 3px; }
+.tl-act { display: inline-flex; gap: 8px; margin-top: 7px; }
+.tl-act span { font-size: 11.5px; padding: 4px 12px; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--line); color: var(--sub); background: var(--panel); }
+.tl-act span.main { color: #fff; background: var(--brand); border-color: transparent; }
+
+/* ============ 三联：热力格 / 柱状图 / 设备状态 ============ */
+.trio { display: grid; grid-template-columns: 1.15fr 1fr 1fr; gap: 16px; }
+.heat-floor { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.heat-floor .fl { width: 34px; font-size: 11.5px; color: var(--muted); font-family: var(--num-font); text-align: right; flex-shrink: 0; }
+.heat-cells { flex: 1; display: grid; grid-template-columns: repeat(5, 1fr); gap: 7px; }
+.cell { height: 32px; border-radius: 9px; background: var(--ok-soft);
+  border: 1px solid color-mix(in srgb, var(--ok) 30%, transparent);
+  display: grid; place-items: center; font-size: 10px; color: var(--ok); font-family: var(--num-font);
+  cursor: pointer; transition: transform .12s ease; }
+.cell:hover { transform: scale(1.18); }
+.cell.warn { background: var(--warn-soft); border-color: var(--warn); color: var(--warn); font-weight: 700; }
+.cell.bad  { background: var(--danger-soft); border-color: var(--danger); color: var(--danger); font-weight: 700; animation: pulse 2s infinite; --status: var(--danger); }
+.cell.off  { background: var(--offline-soft); border-color: var(--line-strong); color: var(--muted); }
+.cell.empty { background: transparent; border-style: dashed; color: var(--line-strong); }
+.heat-legend { display: flex; gap: 13px; margin-top: 11px; font-size: 11px; color: var(--sub); flex-wrap: wrap; }
+.heat-legend .sq { display: inline-block; width: 9px; height: 9px; border-radius: 3px; margin-right: 4px; }
+
+.bars { display: flex; align-items: flex-end; gap: 12px; height: 130px; padding: 4px 4px 0; }
+.bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; height: 100%; justify-content: flex-end; }
+.bar-col .num { font-family: var(--num-font); font-size: 10.5px; color: var(--muted); }
+.bar-col .bar { width: 100%; max-width: 30px; border-radius: 6px 6px 3px 3px;
+  background: color-mix(in srgb, var(--brand-2) 30%, var(--ring-track));
+  transition: transform .15s ease; transform-origin: bottom; }
+.bar-col:hover .bar { transform: scaleY(1.04); }
+.bar-col.today .bar { background: linear-gradient(180deg,var(--brand-2),var(--brand)); }
+.bar-col.peak .bar { background: linear-gradient(180deg,var(--warn),var(--danger)); }
+.bar-col .day { font-size: 10.5px; color: var(--muted); white-space: nowrap; }
+.bar-col.today .day { color: var(--brand); font-weight: 700; }
+
+.dev { display: flex; align-items: center; gap: 11px; padding: 10px 2px; border-bottom: 1px dashed var(--line); }
+.dev:last-child { border-bottom: none; }
+.dev .d-ic { width: 32px; height: 32px; border-radius: 8px; display: grid; place-items: center;
+  font-size: 14px; background: var(--panel-2); border: 1px solid var(--line); flex-shrink: 0; }
+.dev .d-info { flex: 1; min-width: 0; }
+.dev .d-info b { display: block; font-size: 12.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dev .d-info span { display: block; font-size: 10.5px; color: var(--muted); margin-top: 1px; }
+.batt { width: 68px; flex-shrink: 0; }
+.batt .b-num { font-family: var(--num-font); font-size: 11px; font-weight: 700; text-align: right; margin-bottom: 3px; }
+.batt .pbar { height: 5px; }
+.dev.crit .b-num { color: var(--danger); }
+.dev.crit .pbar i { background: var(--danger); }
+.dev.low .b-num { color: var(--warn); }
+.dev.low .pbar i { background: var(--warn); }
+.dev.fine .b-num { color: var(--ok); }
+.dev.fine .pbar i { background: var(--ok); }
+
+/* ============ AI 洞察 + 随访任务 ============ */
+.duo2 { display: grid; grid-template-columns: 1fr 1.3fr; gap: 16px; }
+.ai-card { position: relative; border: 1px solid transparent;
+  background: linear-gradient(var(--panel),var(--panel)) padding-box, var(--ai-grad) border-box;
+  border-width: 1.5px; }
+.ai-head { display: flex; align-items: center; gap: 9px; margin-bottom: 11px; }
+.ai-head .ai-ic { width: 32px; height: 32px; border-radius: 9px; display: grid; place-items: center;
+  background: var(--ai-grad); color: #fff; font-size: 15px; }
+.ai-head b { font-size: 15px; }
+.ai-head .tag { margin-left: auto; font-size: 10.5px; color: var(--brand); background: var(--brand-soft);
+  padding: 3px 9px; border-radius: 999px; font-weight: 700; }
+.ai-item { display: flex; gap: 9px; padding: 8px 0; font-size: 12.5px; color: var(--sub); border-bottom: 1px dashed var(--line); }
+.ai-item:last-of-type { border-bottom: none; }
+.ai-item .n { font-family: var(--num-font); font-weight: 800; color: var(--brand); flex-shrink: 0; }
+.ai-item b { color: var(--text); }
+.ai-cta { margin-top: 12px; display: flex; gap: 9px; }
+.ai-cta span { font-size: 12px; padding: 7px 16px; border-radius: 999px; cursor: pointer;
+  border: 1px solid var(--line); color: var(--sub); }
+.ai-cta span.main { color: #fff; background: var(--ai-grad); border-color: transparent; font-weight: 600; }
+
+.task { display: flex; align-items: center; gap: 11px; padding: 10px 4px; border-bottom: 1px dashed var(--line); }
+.task:last-child { border-bottom: none; }
+.task .box { width: 17px; height: 17px; flex-shrink: 0; border-radius: 5px; border: 1.5px solid var(--line-strong);
+  display: grid; place-items: center; font-size: 11px; color: #fff; cursor: pointer; }
+.task.done .box { background: var(--ok); border-color: var(--ok); }
+.task .t-info { flex: 1; min-width: 0; }
+.task .t-info b { font-size: 13px; }
+.task.done .t-info b { text-decoration: line-through; color: var(--muted); font-weight: 500; }
+.task .t-info span { display: block; font-size: 11px; color: var(--muted); margin-top: 1px; }
+.task .t-time { font-family: var(--num-font); font-size: 11px; color: var(--muted); white-space: nowrap; }
+
+/* ============ 交接摘要 ============ */
+.report-panel { border-top: 3px solid var(--brand); }
+.stack { display: flex; height: 14px; border-radius: 99px; overflow: hidden; margin-top: 14px; }
+.stack i { display: block; height: 100%; }
+.legend { display: flex; gap: 18px; margin-top: 9px; font-size: 12px; color: var(--sub); }
+.legend .sq { display: inline-block; width: 9px; height: 9px; border-radius: 3px; margin-right: 5px; }
+.legend b { font-family: var(--num-font); }
+.actions { margin-top: 14px; display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+.act-card { border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--panel-2);
+  padding: 12px 14px; transition: transform .15s ease, box-shadow .15s ease; }
+.act-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-hover); }
+.act-card .hd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 7px; }
+.act-card .hd b { font-size: 13.5px; }
+.act-card p { font-size: 12px; color: var(--sub); line-height: 1.55; }
+.act-card .who { display: flex; align-items: center; gap: 7px; margin-top: 10px; }
+.mini-avatar { width: 22px; height: 22px; border-radius: 50%; background: var(--avatar-bg);
+  color: #fff; display: grid; place-items: center; font-size: 10px; font-weight: 700; flex-shrink: 0; }
+.act-card .who span { font-size: 11.5px; color: var(--muted); }
+
+footer { text-align: center; color: var(--muted); font-size: 12px; padding: 18px 0 30px; }
+</style>
+</head>
+<body data-theme="instrument">
+
+<div class="switcher">
+  <b>UI 主题样板</b>
+  <button data-t="instrument" class="active">方向二 · 医疗器械风</button>
+  <button data-t="warm">方向三 · 温感疗愈系</button>
+  <a href="login-preview.html">登录页样板 →</a>
+</div>
+
+<div class="frame">
+  <!-- ============ 侧栏 v2 ============ -->
+  <aside class="sidebar">
+    <div class="panel">
+      <div class="side-head">
+        <div class="sh-label">COMMUNITY CONSOLE</div>
+        <div class="sh-title">社区工作台</div>
+        <div class="sh-sub">监护 · 拓扑 · 成员 · 智能体</div>
+      </div>
+
+      <div class="profile">
+        <div class="avatar">陈</div>
+        <div>
+          <div class="p-name">陈值守</div>
+          <div class="p-role">社区管理员</div>
+        </div>
+        <span class="onduty">● 在岗</span>
+      </div>
+
+      <div class="side-nav">
+        <div class="nav-item active">
+          <span class="ic">♥</span>
+          <span class="nv"><b>总览监护</b><span>实时曲线与健康总览</span></span>
+        </div>
+        <div class="nav-item">
+          <span class="ic">⊞</span>
+          <span class="nv"><b>设备拓扑</b><span>老人、家属与设备关系</span></span>
+        </div>
+        <div class="nav-item">
+          <span class="ic">☰</span>
+          <span class="nv"><b>成员设备</b><span>注册、绑定与台账</span></span>
+        </div>
+        <div class="nav-item">
+          <span class="ic">✦</span>
+          <span class="nv"><b>智能体工作台</b><span>问答、分析与工具</span></span>
+        </div>
+      </div>
+
+      <div class="shift-card">
+        <div class="sc-head"><b>今日值班 · 白班</b><span>08:00–20:00</span></div>
+        <div class="pbar"><i style="width:72%"></i></div>
+        <div class="sc-foot"><span>已值守 8.6 小时</span><span>19:37 交接</span></div>
+      </div>
+
+      <div class="todo-mini">
+        <div class="tm-head">今日待办<span>2/4</span></div>
+        <div class="todo done"><span class="box">✓</span><label>上午集中巡检 1–2 号楼</label></div>
+        <div class="todo done"><span class="box">✓</span><label>回访钱七夜间心率波动</label></div>
+        <div class="todo"><span class="box"></span><label>核实周九设备离线原因</label></div>
+        <div class="todo"><span class="box"></span><label>整理今日交接报告</label></div>
+      </div>
+
+      <div class="side-spacer"></div>
+      <div class="side-foot"><span>⚙ 工具入口</span><span class="ver">v2.4.1</span></div>
+    </div>
+  </aside>
+
+  <!-- ============ 主区 ============ -->
+  <main class="main">
+    <div class="panel topbar">
+      <div class="brand-line">
+        <div class="logo">护</div>
+        <div>
+          <div class="brand-eyebrow">AIOT CARE CONSOLE</div>
+          <div class="brand-name">智慧康养健康监测平台</div>
+        </div>
+      </div>
+      <div class="top-utils">
+        <div class="search-box">⌕ 搜索老人 / 设备 / 房间…</div>
+        <div class="util-btn">🔔<span class="u-dot">3</span></div>
+        <div class="util-btn">✉</div>
+        <div class="mini-avatar" style="width:34px;height:34px;font-size:13px">陈</div>
+      </div>
+    </div>
+
+    <!-- Hero -->
+    <div class="panel hero">
+      <div class="score-wrap">
+        <div class="ring">
+          <svg width="108" height="108" viewBox="0 0 108 108">
+            <circle class="track" cx="54" cy="54" r="46"/>
+            <circle class="bar" cx="54" cy="54" r="46" style="--target: 46"/>
+          </svg>
+          <div class="val"><div><b>84</b><span>社区健康指数</span></div></div>
+        </div>
+        <div class="score-meta">
+          <h2>今日社区态势</h2>
+          <p>10 台设备纳入分析，整体平稳，1 个对象需要本班次优先闭环。</p>
+          <span class="tag">较昨日 +2.3 分</span>
+        </div>
+      </div>
+      <div class="kpis">
+        <div class="kpi">
+          <div class="k">在线设备</div><div class="v">9<small>/11</small></div>
+          <div class="foot"><span class="delta up">▲ 1</span>
+            <svg class="spark" viewBox="0 0 74 26"><polyline points="0,18 12,16 24,17 36,12 48,13 60,8 74,6"/></svg></div>
+        </div>
+        <div class="kpi alert">
+          <div class="k">未确认告警</div><div class="v">3</div>
+          <div class="foot"><span class="delta down">▲ 2</span>
+            <svg class="spark" viewBox="0 0 74 26"><polyline points="0,20 12,20 24,14 36,16 48,10 60,12 74,6"/></svg></div>
+        </div>
+        <div class="kpi">
+          <div class="k">平均健康分</div><div class="v">82.4</div>
+          <div class="foot"><span class="delta up">▲ 1.8</span>
+            <svg class="spark" viewBox="0 0 74 26"><polyline points="0,14 12,15 24,12 36,13 48,9 60,10 74,7"/></svg></div>
+        </div>
+        <div class="kpi">
+          <div class="k">今日随访进度</div><div class="v">6<small>/10</small></div>
+          <div class="foot"><div class="pbar"><i style="width:60%"></i></div><span class="delta flat">60%</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 快捷操作 -->
+    <div class="qa-row">
+      <div class="qa"><span class="qa-ic">📢</span><span><b>发起社区广播</b><span>向楼栋网关推送语音提醒</span></span></div>
+      <div class="qa"><span class="qa-ic">🩺</span><span><b>发起随访</b><span>为重点对象创建回访任务</span></span></div>
+      <div class="qa"><span class="qa-ic">⚡</span><span><b>处理告警</b><span>3 条待确认告警进入队列</span></span></div>
+      <div class="qa"><span class="qa-ic">🖨</span><span><b>导出交接报告</b><span>生成 A4 医疗版 PDF</span></span></div>
+    </div>
+
+    <!-- 老人卡片 -->
+    <div class="panel">
+      <div class="section-head">
+        <div>
+          <div class="section-label">社区监护总览</div>
+          <div class="section-title">老人监护对象</div>
+        </div>
+        <span class="more">查看全部 11 位 ›</span>
+      </div>
+      <div class="grid">
+        <div class="elder-card s-warn">
+          <div class="ec-top">
+            <div class="avatar">郑<span class="st-dot live"></span></div>
+            <div class="ec-id"><div class="name">郑十一</div><div class="room">3-103 · T10 手环</div></div>
+            <span class="badge">中风险</span>
+          </div>
+          <div class="ec-vitals">
+            <span class="vt"><i>心率</i><b>88</b></span>
+            <span class="vt hi"><i>血氧</i><b>92%</b></span>
+            <span class="vt"><i>体温</i><b>36.8</b></span>
+          </div>
+          <div class="ec-foot"><span class="label">健康分</span><div class="pbar"><i style="width:64%"></i></div><span class="score">64</span></div>
+        </div>
+        <div class="elder-card s-off">
+          <div class="ec-top">
+            <div class="avatar">周<span class="st-dot"></span></div>
+            <div class="ec-id"><div class="name">周九</div><div class="room">3-101 · T10 手环</div></div>
+            <span class="badge">离线</span>
+          </div>
+          <div class="ec-vitals">
+            <span class="vt na"><i>心率</i><b>--</b></span>
+            <span class="vt na"><i>血氧</i><b>--</b></span>
+            <span class="vt na"><i>体温</i><b>--</b></span>
+          </div>
+          <div class="ec-foot"><span class="label">离线 12 分钟 · 优先排查采集链路</span></div>
+        </div>
+        <div class="elder-card s-ok">
+          <div class="ec-top">
+            <div class="avatar">李<span class="st-dot live"></span></div>
+            <div class="ec-id"><div class="name">李四</div><div class="room">1-102 · T10 手环</div></div>
+            <span class="badge">低风险</span>
+          </div>
+          <div class="ec-vitals">
+            <span class="vt"><i>心率</i><b>76</b></span>
+            <span class="vt"><i>血氧</i><b>97%</b></span>
+            <span class="vt"><i>体温</i><b>36.5</b></span>
+          </div>
+          <div class="ec-foot"><span class="label">健康分</span><div class="pbar"><i style="width:88%"></i></div><span class="score">88</span></div>
+        </div>
+        <div class="elder-card s-ok">
+          <div class="ec-top">
+            <div class="avatar">王<span class="st-dot live"></span></div>
+            <div class="ec-id"><div class="name">王五</div><div class="room">1-103 · T10 手环</div></div>
+            <span class="badge">低风险</span>
+          </div>
+          <div class="ec-vitals">
+            <span class="vt"><i>心率</i><b>72</b></span>
+            <span class="vt"><i>血氧</i><b>98%</b></span>
+            <span class="vt"><i>体温</i><b>36.4</b></span>
+          </div>
+          <div class="ec-foot"><span class="label">健康分</span><div class="pbar"><i style="width:91%"></i></div><span class="score">91</span></div>
+        </div>
+        <div class="elder-card s-ok">
+          <div class="ec-top">
+            <div class="avatar">赵<span class="st-dot live"></span></div>
+            <div class="ec-id"><div class="name">赵六</div><div class="room">2-101 · T10 手环</div></div>
+            <span class="badge">低风险</span>
+          </div>
+          <div class="ec-vitals">
+            <span class="vt"><i>心率</i><b>81</b></span>
+            <span class="vt"><i>血氧</i><b>96%</b></span>
+            <span class="vt"><i>体温</i><b>36.6</b></span>
+          </div>
+          <div class="ec-foot"><span class="label">健康分</span><div class="pbar"><i style="width:85%"></i></div><span class="score">85</span></div>
+        </div>
+        <div class="elder-card s-ok">
+          <div class="ec-top">
+            <div class="avatar">钱<span class="st-dot live"></span></div>
+            <div class="ec-id"><div class="name">钱七</div><div class="room">2-102 · T10 手环</div></div>
+            <span class="badge">低风险</span>
+          </div>
+          <div class="ec-vitals">
+            <span class="vt"><i>心率</i><b>79</b></span>
+            <span class="vt"><i>血氧</i><b>97%</b></span>
+            <span class="vt"><i>体温</i><b>36.5</b></span>
+          </div>
+          <div class="ec-foot"><span class="label">健康分</span><div class="pbar"><i style="width:82%"></i></div><span class="score">82</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 实时监护 + 告警时间线 -->
+    <div class="duo">
+      <div class="panel">
+        <div class="section-label">实时监护视图</div>
+        <div class="live-head">
+          <div class="avatar">李</div>
+          <div>
+            <div class="section-title" style="margin:0">李四 · 1-102</div>
+            <div style="font-size:11.5px;color:var(--muted)">T10-WATCH · 53:57:08:00:00:01</div>
+          </div>
+          <span class="live-chip"><span class="d"></span>实时采集中</span>
+        </div>
+        <div class="ecg-box">
+          <svg viewBox="0 0 600 92" preserveAspectRatio="none">
+            <g class="spark-grid">
+              <line x1="0" y1="23" x2="600" y2="23"/><line x1="0" y1="46" x2="600" y2="46"/><line x1="0" y1="69" x2="600" y2="69"/>
+            </g>
+            <polyline class="ecg-line" points="0,50 30,50 42,48 54,52 66,50 78,50 86,18 92,74 100,50 130,50 142,48 154,52 166,50 178,50 186,20 192,72 200,50 230,50 242,48 254,52 266,50 278,50 286,18 292,74 300,50 330,50 342,48 354,52 366,50 378,50 386,20 392,72 400,50 430,50 442,48 454,52 466,50 478,50 486,18 492,74 500,50 530,50 542,48 554,52 566,50 578,50 586,20 592,72 600,50"/>
+          </svg>
+          <div class="ecg-cap"><span>ECG · 实时</span><span>采样 1s · 窗口 60s</span></div>
+        </div>
+        <div class="vitals">
+          <div class="vital">
+            <div class="k">心率 HR <span class="delta up">▲ 2</span></div>
+            <div class="v">76<span class="u">bpm</span></div>
+            <div class="range">参考 60–100</div>
+            <svg class="spark" viewBox="0 0 120 22"><line class="band" x1="0" y1="11" x2="120" y2="11"/><polyline points="0,14 15,13 30,15 45,11 60,12 75,9 90,11 105,8 120,9"/></svg>
+          </div>
+          <div class="vital">
+            <div class="k">血氧 SpO₂ <span class="delta flat">—</span></div>
+            <div class="v">97<span class="u">%</span></div>
+            <div class="range">参考 ≥ 94</div>
+            <svg class="spark" viewBox="0 0 120 22"><line class="band" x1="0" y1="8" x2="120" y2="8"/><polyline points="0,9 15,8 30,9 45,7 60,8 75,8 90,7 105,8 120,7"/></svg>
+          </div>
+          <div class="vital">
+            <div class="k">血压 BP <span class="delta flat">—</span></div>
+            <div class="v">124/82<span class="u">mmHg</span></div>
+            <div class="range">参考 &lt; 140/90</div>
+            <svg class="spark" viewBox="0 0 120 22"><line class="band" x1="0" y1="12" x2="120" y2="12"/><polyline points="0,13 15,12 30,14 45,12 60,13 75,11 90,12 105,11 120,12"/></svg>
+          </div>
+          <div class="vital">
+            <div class="k">体温 TEMP <span class="delta up">▲ 0.1</span></div>
+            <div class="v">36.5<span class="u">°C</span></div>
+            <div class="range">参考 36.0–37.2</div>
+            <svg class="spark" viewBox="0 0 120 22"><line class="band" x1="0" y1="12" x2="120" y2="12"/><polyline points="0,13 15,13 30,12 45,13 60,12 75,12 90,13 105,12 120,12"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="section-label">告警队列</div>
+        <div class="section-title">最近告警</div>
+        <div class="tl">
+          <div class="tl-item">
+            <div class="tl-dot p0"></div>
+            <div class="tl-body">
+              <div class="tl-head"><b>周九 · 设备离线</b><span class="lv p0">P0</span><span class="t">20:38</span></div>
+              <p>采集链路中断 12 分钟，需现场核实设备与网关状态。</p>
+              <div class="tl-act"><span class="main">立即处理</span><span>指派他人</span></div>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot p1"></div>
+            <div class="tl-body">
+              <div class="tl-head"><b>郑十一 · 血氧偏低</b><span class="lv p1">P1</span><span class="t">20:21</span></div>
+              <p>SpO₂ 92%，低于阈值 94%，已自动通知家属。</p>
+              <div class="tl-act"><span class="main">回访确认</span><span>查看曲线</span></div>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot p1"></div>
+            <div class="tl-body">
+              <div class="tl-head"><b>钱七 · 心率波动</b><span class="lv p1">P1</span><span class="t">19:47</span></div>
+              <p>夜间心率 104 bpm 持续 6 分钟，建议今日回访。</p>
+              <div class="tl-act"><span>查看曲线</span></div>
+            </div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-dot ok"></div>
+            <div class="tl-body">
+              <div class="tl-head"><b>孙八 · 体温恢复正常</b><span class="t">18:12</span></div>
+              <p>体温 36.7°C 回落到参考区间，告警自动关闭。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 楼栋热力 / 周告警 / 设备状态 -->
+    <div class="trio">
+      <div class="panel">
+        <div class="section-label">楼栋态势</div>
+        <div class="section-title">房间状态热力图</div>
+        <div class="heat-floor"><span class="fl">4F</span>
+          <div class="heat-cells">
+            <span class="cell">401</span><span class="cell">402</span><span class="cell empty">403</span><span class="cell empty">404</span><span class="cell empty">405</span>
+          </div>
+        </div>
+        <div class="heat-floor"><span class="fl">3F</span>
+          <div class="heat-cells">
+            <span class="cell bad">301</span><span class="cell">302</span><span class="cell warn">303</span><span class="cell empty">304</span><span class="cell empty">305</span>
+          </div>
+        </div>
+        <div class="heat-floor"><span class="fl">2F</span>
+          <div class="heat-cells">
+            <span class="cell">201</span><span class="cell">202</span><span class="cell">203</span><span class="cell empty">204</span><span class="cell empty">205</span>
+          </div>
+        </div>
+        <div class="heat-floor"><span class="fl">1F</span>
+          <div class="heat-cells">
+            <span class="cell off">101</span><span class="cell">102</span><span class="cell">103</span><span class="cell empty">104</span><span class="cell empty">105</span>
+          </div>
+        </div>
+        <div class="heat-legend">
+          <span><span class="sq" style="background:var(--ok)"></span>平稳</span>
+          <span><span class="sq" style="background:var(--warn)"></span>需关注</span>
+          <span><span class="sq" style="background:var(--danger)"></span>需处置</span>
+          <span><span class="sq" style="background:var(--offline)"></span>未绑定/离线</span>
+          <span><span class="sq" style="border:1px dashed var(--line-strong)"></span>空房</span>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="section-head">
+          <div>
+            <div class="section-label">趋势分析</div>
+            <div class="section-title">近 7 日告警数</div>
+          </div>
+          <span class="delta up">▼ 33% 环比</span>
+        </div>
+        <div class="bars">
+          <div class="bar-col"><span class="num">4</span><div class="bar" style="height:32%"></div><span class="day">周四</span></div>
+          <div class="bar-col"><span class="num">6</span><div class="bar" style="height:48%"></div><span class="day">周五</span></div>
+          <div class="bar-col peak"><span class="num">9</span><div class="bar" style="height:76%"></div><span class="day">周六</span></div>
+          <div class="bar-col"><span class="num">5</span><div class="bar" style="height:40%"></div><span class="day">周日</span></div>
+          <div class="bar-col"><span class="num">3</span><div class="bar" style="height:24%"></div><span class="day">周一</span></div>
+          <div class="bar-col"><span class="num">4</span><div class="bar" style="height:32%"></div><span class="day">周二</span></div>
+          <div class="bar-col today"><span class="num">3</span><div class="bar" style="height:24%"></div><span class="day">今天</span></div>
+        </div>
+        <p style="font-size:11.5px;color:var(--sub);margin-top:10px">周六出现告警峰值（郑十一血氧连续波动），本周整体呈回落趋势。</p>
+      </div>
+
+      <div class="panel">
+        <div class="section-head">
+          <div>
+            <div class="section-label">设备健康</div>
+            <div class="section-title">需要维护的设备</div>
+          </div>
+          <span class="more">全部设备 ›</span>
+        </div>
+        <div class="dev crit">
+          <span class="d-ic">⌚</span>
+          <span class="d-info"><b>周九 · T10 手环</b><span>信号丢失 · 最后在线 20:26</span></span>
+          <span class="batt"><span class="b-num">12%</span><div class="pbar"><i style="width:12%"></i></div></span>
+        </div>
+        <div class="dev low">
+          <span class="d-ic">⌚</span>
+          <span class="d-info"><b>王五 · T10 手环</b><span>信号正常 · 建议今晚充电</span></span>
+          <span class="batt"><span class="b-num">28%</span><div class="pbar"><i style="width:28%"></i></div></span>
+        </div>
+        <div class="dev fine">
+          <span class="d-ic">📷</span>
+          <span class="d-info"><b>3F 走廊 · 跌倒监测相机</b><span>视频流正常 · 帧率 15fps</span></span>
+          <span class="batt"><span class="b-num">在线</span><div class="pbar"><i style="width:100%"></i></div></span>
+        </div>
+        <div class="dev fine">
+          <span class="d-ic">📡</span>
+          <span class="d-info"><b>蓝牙采集网关 · COM3</b><span>串口正常 · 双包合并率 99.2%</span></span>
+          <span class="batt"><span class="b-num">在线</span><div class="pbar"><i style="width:100%"></i></div></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI 洞察 + 随访任务 -->
+    <div class="duo2">
+      <div class="panel ai-card">
+        <div class="ai-head">
+          <span class="ai-ic">✦</span><b>智能体今日洞察</b><span class="tag">Qwen 驱动</span>
+        </div>
+        <div class="ai-item"><span class="n">01</span><span><b>郑十一</b> 血氧近 3 日均值下降 1.8%，建议升级为重点观察对象并安排血氧仪复测。</span></div>
+        <div class="ai-item"><span class="n">02</span><span><b>周六告警峰值</b>与降温天气相关，本周低温时段可提前推送保暖提醒广播。</span></div>
+        <div class="ai-item"><span class="n">03</span><span><b>3 号楼</b>集中了全部中高风险对象，建议明日巡检路线优先覆盖 3F。</span></div>
+        <div class="ai-cta"><span class="main">✦ 生成今日简报</span><span>去工作台追问</span></div>
+      </div>
+
+      <div class="panel">
+        <div class="section-head">
+          <div>
+            <div class="section-label">随访安排</div>
+            <div class="section-title">今日随访任务</div>
+          </div>
+          <span class="more">+ 新建任务</span>
+        </div>
+        <div class="task done">
+          <span class="box">✓</span>
+          <span class="t-info"><b>回访钱七 · 确认夜间心率波动</b><span>已完成 · 无持续异常，维持常规观察</span></span>
+          <span class="t-time">09:30</span>
+        </div>
+        <div class="task done">
+          <span class="box">✓</span>
+          <span class="t-info"><b>巡检 1–2 号楼在线设备</b><span>已完成 · 全部在线，王五手环电量偏低</span></span>
+          <span class="t-time">11:00</span>
+        </div>
+        <div class="task">
+          <span class="box"></span>
+          <span class="t-info"><b>核实周九设备离线原因</b><span>P0 · 现场检查手环与网关供电</span></span>
+          <span class="t-time">21:00 前</span>
+        </div>
+        <div class="task">
+          <span class="box"></span>
+          <span class="t-info"><b>郑十一血氧复测并记录</b><span>P1 · 结果同步家属并更新风险等级</span></span>
+          <span class="t-time">明日 10:00</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 交接摘要 -->
+    <div class="panel report-panel">
+      <div class="section-label">SHIFT COMMAND BRIEF</div>
+      <div class="section-title" style="margin-bottom:0">海棠社区值守交接摘要</div>
+      <div class="stack">
+        <i style="background:var(--danger);width:10%"></i>
+        <i style="background:var(--warn);width:20%"></i>
+        <i style="background:var(--ok);width:70%"></i>
+      </div>
+      <div class="legend">
+        <span><span class="sq" style="background:var(--danger)"></span>高风险 <b>1</b> 人</span>
+        <span><span class="sq" style="background:var(--warn)"></span>中风险 <b>2</b> 人</span>
+        <span><span class="sq" style="background:var(--ok)"></span>低风险 <b>7</b> 人</span>
+      </div>
+      <div class="actions">
+        <div class="act-card">
+          <div class="hd"><b>立即核实周九</b><span class="lv p0">P0</span></div>
+          <p>排查设备离线链路，确认采集是否中断并补齐现场观察。</p>
+          <div class="who"><span class="mini-avatar">陈</span><span>待指派 · 本班次内闭环</span></div>
+        </div>
+        <div class="act-card">
+          <div class="hd"><b>24h 内跟进郑十一</b><span class="lv p1">P1</span></div>
+          <p>回访确认血氧趋势是否持续，视结果决定是否升级为重点对象。</p>
+          <div class="who"><span class="mini-avatar">王</span><span>王护士 · 明日 10:00 前</span></div>
+        </div>
+        <div class="act-card">
+          <div class="hd"><b>持续观察低风险对象</b><span class="lv p2">P2</span></div>
+          <p>7 个低风险对象关注趋势是否由稳转弱，下个班次继续复核。</p>
+          <div class="who"><span class="mini-avatar">值</span><span>值守组 · 常规巡检</span></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<footer>主题样板 · 仅静态演示，不接真实数据 · docs/ui-mockups/theme-preview.html</footer>
+
+<script>
+function applyTheme(t) {
+  document.body.dataset.theme = t;
+  document.querySelectorAll('.switcher button').forEach(b => b.classList.toggle('active', b.dataset.t === t));
+}
+document.querySelectorAll('.switcher button').forEach(btn => {
+  btn.addEventListener('click', () => applyTheme(btn.dataset.t));
+});
+const initial = location.hash.replace('#', '');
+if (initial === 'warm' || initial === 'instrument') applyTheme(initial);
+const scrollTarget = new URLSearchParams(location.search).get('scroll');
+if (scrollTarget) setTimeout(() => window.scrollTo(0, parseInt(scrollTarget, 10)), 150);
+</script>
+</body>
+</html>

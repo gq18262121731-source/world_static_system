@@ -1,0 +1,93 @@
+# Environment
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+pytest-cache-files-*
+
+# Node / frontend builds
+node_modules/
+frontend/vue-dashboard/node_modules/
+dist/
+build/
+frontend/vue-dashboard/dist/
+
+# Logs and runtime output
+*.log
+logs/
+runtime_logs/
+camera_runtime_external/runtime_logs/
+output/
+
+# IDE / local tools
+.idea/
+.vscode/
+.cursor/
+.agents/
+.playwright-cli/
+.impeccable.md
+
+# Data, caches, and temporary test output
+data/
+datasets/
+runs/
+weights/
+tmp_knowledge_test/
+omni_test/
+.omni_test/
+backend/tmp_x.txt
+*.tmp
+*.bak
+
+# Model weights and generated artifacts
+*.pt
+*.pth
+*.onnx
+*.engine
+*.zip
+*.rar
+*.7z
+
+# 例外：跌倒检测推理权重随仓库分发（共约 18MB），否则 clone 下来跑不了跌倒检测。
+# 训练产物与大模型权重仍走上面的忽略规则，不要往这里加。
+!fall_detection_model_bundle/weights/
+!fall_detection_model_bundle/weights/**
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Public source snapshot: machine configuration and generated artifacts
+/camera_runtime_external/camera_live_config*.json
+/camera_runtime_external/dualserver.ini
+/fall_detection_model_bundle/runtime_bridge/camera_live_config.json
+/fall_detection_model_bundle/v3_upgrade_lab/experiments/
+/fall_detection_model_bundle/v3_upgrade_lab/exports/
+/fall_detection_model_bundle/v3_upgrade_lab/manifests/
+/fall_detection_model_bundle/reports/*.json
+/docs/shots/
+/docs/v2-merge/
+*.pt
+*.pth
+*.onnx
+*.engine
+*.db
+*.sqlite
+*.log.*
+/1.png
+/3.png
+/4.png
+/5.jpg
+/sos.png
+/ai_test.py
+/test.py
+/data_test.py
+/process_data.py
+/detector.py
+/frontend/vue-dashboard/*console.error*
